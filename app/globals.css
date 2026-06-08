@@ -24,3 +24,107 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.ambient-bg {
+  background-image: linear-gradient(
+    160deg,
+    var(--sky-top),
+    var(--sky-bottom)
+  );
+  background-size: 200% 200%;
+  animation: sky-drift 40s linear infinite;
+}
+
+@keyframes sky-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.flip-card {
+  perspective: 400px;
+}
+
+.flip-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: #262626;
+  display: flex;
+}
+
+.flip-panel span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 200%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-panel.top {
+  top: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+}
+
+.flip-panel.top span {
+  top: 0;
+}
+
+.flip-panel.bottom {
+  bottom: 0;
+}
+
+.flip-panel.bottom span {
+  bottom: 0;
+}
+
+.flip-flap {
+  z-index: 2;
+  backface-visibility: hidden;
+}
+
+.flip-flap.top {
+  transform-origin: bottom;
+  transform: rotateX(0deg);
+}
+
+.flip-flap.bottom {
+  transform-origin: top;
+  transform: rotateX(90deg);
+}
+
+.flip-flap.top.animate {
+  animation: flip-down-top 0.3s ease-in forwards;
+}
+
+.flip-flap.bottom.animate {
+  animation: flip-down-bottom 0.3s ease-out 0.3s forwards;
+}
+
+@keyframes flip-down-top {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flip-down-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
