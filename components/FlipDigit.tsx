@@ -22,7 +22,7 @@ export default function FlipDigit({ value }: FlipDigitProps) {
   const animating = flipKey > 0;
 
   return (
-    <div className="flip-card relative h-32 w-24 overflow-hidden rounded-xl text-7xl font-bold tabular-nums text-neutral-100 shadow-xl sm:h-44 sm:w-32 sm:text-8xl">
+    <div className="flip-card relative overflow-hidden rounded-xl font-bold tabular-nums text-neutral-100 shadow-xl">
       <div className="flip-panel top">
         <span>{current}</span>
       </div>
