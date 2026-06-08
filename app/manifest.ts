@@ -6,8 +6,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Nightstand",
     description: "A calm, ambient flip clock for your nightstand.",
     start_url: "/",
-    display: "standalone",
-    orientation: "portrait",
+    display: "fullscreen",
+    orientation: "any",
     background_color: "#0a0b14",
     theme_color: "#0a0b14",
     icons: [

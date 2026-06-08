@@ -18,12 +18,49 @@ function formatDate(now: Date) {
   });
 }
 
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+type LockableScreenOrientation = ScreenOrientation & {
+  lock: (orientation: "portrait" | "landscape") => Promise<void>;
+};
+
+async function toggleOrientation() {
+  try {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    }
+    const orientation = screen.orientation as LockableScreenOrientation;
+    const next = orientation.type.startsWith("portrait")
+      ? "landscape"
+      : "portrait";
+    await orientation.lock(next);
+  } catch {
+    // orientation lock isn't supported on this device
+  }
+}
+
 const initialSky: SkyColors = { top: "rgb(8, 10, 24)", bottom: "rgb(18, 12, 34)" };
 
 export default function Home() {
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [sky, setSky] = useState<SkyColors>(initialSky);
+  const [canRotate, setCanRotate] = useState(false);
+
+  useEffect(() => {
+    const supportsLock =
+      "orientation" in screen &&
+      typeof (screen.orientation as Partial<LockableScreenOrientation>).lock ===
+        "function";
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    setCanRotate(supportsLock && isTouch);
+  }, []);
 
   useEffect(() => {
     function tick() {
@@ -41,7 +78,8 @@ export default function Home() {
 
   return (
     <main
-      className="ambient-bg flex flex-1 flex-col items-center justify-center gap-8"
+      onClick={toggleFullscreen}
+      className="ambient-bg relative flex flex-1 flex-col items-center justify-center gap-8 select-none"
       style={
         { "--sky-top": sky.top, "--sky-bottom": sky.bottom } as React.CSSProperties
       }
@@ -60,6 +98,34 @@ export default function Home() {
       <p className="text-xs font-light uppercase tracking-[0.35em] text-white/45 sm:text-sm">
         {date}
       </p>
+
+      {canRotate && (
+        <button
+          type="button"
+          aria-label="Rotate screen"
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleOrientation();
+          }}
+          className="absolute bottom-6 right-6 rounded-full bg-white/10 p-3 text-white/55 backdrop-blur-sm transition hover:bg-white/20 hover:text-white/90"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 2v6h-6" />
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+            <path d="M3 22v-6h6" />
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+          </svg>
+        </button>
+      )}
     </main>
   );
 }
